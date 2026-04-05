@@ -1,7 +1,7 @@
 import './App.css';
 
-import React from "react";
-import { Grid, Typography, Paper } from "@mui/material";
+import React, { createContext, useState } from "react";
+import { Grid, Paper } from "@mui/material";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import TopBar from "./components/TopBar";
@@ -9,8 +9,16 @@ import UserDetail from "./components/UserDetail";
 import UserList from "./components/UserList";
 import UserPhotos from "./components/UserPhotos";
 
-const App = (props) => {
+export const AdvancedFeaturesContext = createContext({
+  advanced: false,
+  setAdvanced: () => {},
+});
+
+const App = () => {
+  const [advanced, setAdvanced] = useState(false);
+
   return (
+    <AdvancedFeaturesContext.Provider value={{ advanced, setAdvanced }}>
       <Router>
         <div>
           <Grid container spacing={2}>
@@ -26,14 +34,9 @@ const App = (props) => {
             <Grid item sm={9}>
               <Paper className="main-grid-item">
                 <Routes>
-                  <Route
-                      path="/users/:userId"
-                      element = {<UserDetail />}
-                  />
-                  <Route
-                      path="/photos/:userId"
-                      element = {<UserPhotos />}
-                  />
+                  <Route path="/users/:userId" element={<UserDetail />} />
+                  <Route path="/photos/:userId/:photoIndex" element={<UserPhotos />} />
+                  <Route path="/photos/:userId" element={<UserPhotos />} />
                   <Route path="/users" element={<UserList />} />
                 </Routes>
               </Paper>
@@ -41,7 +44,8 @@ const App = (props) => {
           </Grid>
         </div>
       </Router>
+    </AdvancedFeaturesContext.Provider>
   );
-}
+};
 
 export default App;
